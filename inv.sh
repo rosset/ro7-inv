@@ -58,6 +58,18 @@ for i in $(cat list1.txt);
             echo $i $OS_VER >> ./result.txt
             OIM1=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i "ps aux | grep -i java  | grep weblogic.Name |grep oim | grep -v NodeManager | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
             total_oim=$(($total_oim + $OIM1))
+			
+		    # OID - todo better ps aux filters
+            OS_VER=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i " echo 'OID ' ; ps aux | grep -i java  | grep weblogic.Server | grep -i oid | grep -v NodeManager | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
+            echo $i $OS_VER >> ./result.txt
+            OID1=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i "ps aux | grep -i java  | grep weblogic.Server | grep -i oid | grep -v NodeManager | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
+            total_oid=$(($total_oid + $OID1))
+
+		    # OUD - todo better ps aux filters
+            OS_VER=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i " echo 'OUD ' ; ps aux | grep -i java  | grep start-ds | grep -i oud | grep -v NodeManager | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
+            echo $i $OS_VER >> ./result.txt
+            OUD1=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i "ps aux | grep -i java  | grep start-ds | grep -i oud | grep -v NodeManager | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
+            total_oud=$(($total_oud + $OUD1))
 
 done
 
@@ -84,5 +96,7 @@ cat ./result.txt
 # "ps aux | grep -i java  | grep weblogic.Server | grep opss.version | grep odi | grep -v AdminServer | grep -v grep | wc -l"
 # SOA
 # "ps aux | grep -i java  | grep weblogic.Server | grep jrf.version | grep soa | grep -v AdminServer | grep -v grep | wc -l"
-# 
-# 
+# OID 
+# ps aux | grep -i java  | grep weblogic.Server | grep -i oid | grep -v NodeManager | grep -v AdminServer | grep -v grep | wc -l
+# OUD
+# ps aux | grep -i java  | grep start-ds | grep -i oud | grep -v NodeManager | grep -v AdminServer | grep -v grep | wc -l
