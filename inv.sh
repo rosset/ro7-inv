@@ -8,6 +8,10 @@ total_oem=0
 total_nm=0
 total_odi=0
 total_soa=0
+total_oam=0
+total_oim=0
+total_oid=0
+total_oud=0
 
 for i in $(cat list1.txt);
         do
@@ -42,6 +46,19 @@ for i in $(cat list1.txt);
             SOA1=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i "ps aux | grep -i java  | grep weblogic.Server | grep jrf.version | grep soa | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
             total_soa=$(($total_soa + $SOA1))
 
+		    # OAM - Oracle SOA Suite
+            OS_VER=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i " echo 'OAM ' ; ps aux | grep -i java  | grep weblogic.Server | grep jrf.version | grep oam | grep IDM | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
+            echo $i $OS_VER >> ./result.txt
+            OAM1=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i "ps aux | grep -i java  | grep weblogic.Server | grep jrf.version | grep oam | grep IDM | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
+            total_oam=$(($total_oam + $OAM1))
+
+
+		    # OIM - todo better ps aux filters
+            OS_VER=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i " echo 'OIM ' ; ps aux | grep -i java  | grep weblogic.Name |grep oim | grep -v NodeManager | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
+            echo $i $OS_VER >> ./result.txt
+            OIM1=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i "ps aux | grep -i java  | grep weblogic.Name |grep oim | grep -v NodeManager | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
+            total_oim=$(($total_oim + $OIM1))
+
 done
 
 # print to the screen
@@ -50,6 +67,10 @@ echo "Total OEM agent " $total_oem
 echo "Total NodeManager " $total_nm
 echo "Total ODI " $total_odi
 echo "Total SOA " $total_soa
+echo "Total OAM " $total_oam
+echo "Total OIM " $total_oim
+echo "Total OID " $total_oid
+echo "Total OUD " $total_oud
 
 cat ./result.txt
 
