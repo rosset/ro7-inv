@@ -12,6 +12,7 @@ total_oam=0
 total_oim=0
 total_oid=0
 total_oud=0
+total_wildfly=0
 
 for i in $(cat list1.txt);
         do
@@ -23,16 +24,16 @@ for i in $(cat list1.txt);
             total_wls=$(($total_wls + $WLS1))
 			
 			# OEM - Oracle Enterprise Manager Agent
-			OS_VER=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i " echo 'OEM agent' ; ps aux | grep -i java  | egrep agent | egrep gcagent | grep -v grep | wc -l" ) 2>/dev/null
-            echo $i $OS_VER >> ./result.txt
-            OEM1=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i "ps aux | grep -i java  | egrep agent | egrep gcagent | grep -v grep | wc -l" ) 2>/dev/null
-            total_oem=$(($total_oem + $OEM1))
+			#OS_VER=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i " echo 'OEM agent' ; ps aux | grep -i java  | egrep agent | egrep gcagent | grep -v grep | wc -l" ) 2>/dev/null
+            #echo $i $OS_VER >> ./result.txt
+            #OEM1=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i "ps aux | grep -i java  | egrep agent | egrep gcagent | grep -v grep | wc -l" ) 2>/dev/null
+            #total_oem=$(($total_oem + $OEM1))
 			
 			# NM - NodeManager
-            OS_VER=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i " echo 'NodeManager ' ; ps aux | grep -i java  | grep weblogic.NodeManager | grep -v grep | wc -l" ) 2>/dev/null
-			echo $i $OS_VER >> ./result.txt
-            NM1=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i "ps aux | grep -i java  | grep weblogic.NodeManager | grep -v grep | wc -l" ) 2>/dev/null
-            total_nm=$(($total_nm + $NM1))
+            #OS_VER=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i " echo 'NodeManager ' ; ps aux | grep -i java  | grep weblogic.NodeManager | grep -v grep | wc -l" ) 2>/dev/null
+			#echo $i $OS_VER >> ./result.txt
+            #NM1=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i "ps aux | grep -i java  | grep weblogic.NodeManager | grep -v grep | wc -l" ) 2>/dev/null
+            #total_nm=$(($total_nm + $NM1))
 			
 		    # ODI - Oracle Data Integrator
             OS_VER=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i " echo 'ODI ' ; ps aux | grep -i java  | grep weblogic.Server | grep opss.version | grep odi | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
@@ -52,7 +53,6 @@ for i in $(cat list1.txt);
             OAM1=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i "ps aux | grep -i java  | grep weblogic.Server | grep jrf.version | grep oam | grep IDM | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
             total_oam=$(($total_oam + $OAM1))
 
-
 		    # OIM - todo better ps aux filters
             OS_VER=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i " echo 'OIM ' ; ps aux | grep -i java  | grep weblogic.Name |grep oim | grep -v NodeManager | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
             echo $i $OS_VER >> ./result.txt
@@ -70,19 +70,27 @@ for i in $(cat list1.txt);
             echo $i $OS_VER >> ./result.txt
             OUD1=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i "ps aux | grep -i java  | grep start-ds | grep -i oud | grep -v NodeManager | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
             total_oud=$(($total_oud + $OUD1))
+            
+		    # Wildfly
+            OS_VER=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i " echo 'Wildfly ' ; ps aux | grep -i java | grep -i wildfly | grep -v grep | wc -l" ) 2>/dev/null
+            echo $i $OS_VER >> ./result.txt
+            WF1=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i "ps aux | grep -i java | grep -i wildfly | grep -v grep | wc -l" ) 2>/dev/null
+            total_wildfly=$(($total_wildfly + $WF1))
 
+			tail -n8 ./result.txt
 done
 
 # print to the screen
 echo "Total WebLogic Server " $total_wls
-echo "Total OEM agent " $total_oem
-echo "Total NodeManager " $total_nm
+#echo "Total OEM agent " $total_oem
+#echo "Total NodeManager " $total_nm
 echo "Total ODI " $total_odi
 echo "Total SOA " $total_soa
 echo "Total OAM " $total_oam
 echo "Total OIM " $total_oim
 echo "Total OID " $total_oid
 echo "Total OUD " $total_oud
+echo "Total Wildfly " $total_wildfly
 
 cat ./result.txt
 
@@ -100,3 +108,5 @@ cat ./result.txt
 # ps aux | grep -i java  | grep weblogic.Server | grep -i oid | grep -v NodeManager | grep -v AdminServer | grep -v grep | wc -l
 # OUD
 # ps aux | grep -i java  | grep start-ds | grep -i oud | grep -v NodeManager | grep -v AdminServer | grep -v grep | wc -l
+# Wildfly
+# ps aux | grep -i java | grep -i wildfly | wc -l
