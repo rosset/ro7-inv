@@ -32,8 +32,8 @@ for i in $(cat list1.txt);
 		    # ODI - Oracle Data Integrator
             OS_VER=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i " echo 'ODI ' ; ps aux | grep -i java  | grep weblogic.Server | grep opss.version | grep odi | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
             echo $i $OS_VER >> ./result.txt
-            WLS1=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i "ps aux | grep -i java  | grep weblogic.Server | grep opss.version | grep odi | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
-            total_wls=$(($total_wls + $WLS1))
+            ODI1=$( SSHPASS=$PASS ./sshpass -e  ssh -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 root@$i "ps aux | grep -i java  | grep weblogic.Server | grep opss.version | grep odi | grep -v AdminServer | grep -v grep | wc -l" ) 2>/dev/null
+            total_odi=$(($total_odi + $ODI1))
 			
 done
 
